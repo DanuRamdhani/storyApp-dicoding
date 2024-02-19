@@ -5,9 +5,9 @@ import 'package:story_app/res/fonts.dart';
 import 'package:story_app/services/router.dart';
 
 Future<void> main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // final authProv = AuthProvider();
-  // await authProv.getUserData();
+  WidgetsFlutterBinding.ensureInitialized();
+  final authProv = AuthProvider();
+  await authProv.getUserData();
 
   runApp(
     MultiProvider(

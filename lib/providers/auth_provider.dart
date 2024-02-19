@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:story_app/models/user.dart';
 import 'package:story_app/services/api_service.dart';
 import 'package:story_app/utils/const.dart';
+import 'package:story_app/views/auth.dart';
+import 'package:story_app/views/list_story.dart';
 
 class AuthProvider extends ChangeNotifier {
   final form = GlobalKey<FormState>();
@@ -37,13 +40,21 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     if (isLoginForm) {
-      final body = await ApiService.login(enteredEmail, enteredPassword);
+      final body =
+          await ApiService.login(context, enteredEmail, enteredPassword);
+      if (body == null) {
+        isAuthenticating = false;
+        notifyListeners();
+        return;
+      }
+
       user = User.fromJson(body);
 
+      if (!context.mounted) return;
       if (body.containsValue('success')) {
+        context.goNamed(ListStoryScreen.routeName);
         await saveUserData();
       } else {
-        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${body['message']}'),
@@ -60,16 +71,25 @@ class AuthProvider extends ChangeNotifier {
         enteredFullname,
       );
 
-      if (!context.mounted) return;
       if (body.containsValue('User created')) {
-        final body = await ApiService.login(enteredEmail, enteredPassword);
         if (!context.mounted) return;
+        final body =
+            await ApiService.login(context, enteredEmail, enteredPassword);
+        if (body == null) {
+          isAuthenticating = false;
+          notifyListeners();
+          return;
+        }
+
         user = User.fromJson(body);
-        notifyListeners();
         if (body.containsValue('success')) {
+          if (!context.mounted) return;
+          context.goNamed(ListStoryScreen.routeName);
           await saveUserData();
         }
+        notifyListeners();
       } else {
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${body['message']}'),
@@ -91,6 +111,8 @@ class AuthProvider extends ChangeNotifier {
     user = null;
     print('token logout: ${user?.loginResult?.token}');
     print('name logout: ${user?.loginResult?.name}');
+    if (!context.mounted) return;
+    context.goNamed(AuthScreen.routeName);
     notifyListeners();
   }
 
@@ -105,6 +127,7 @@ class AuthProvider extends ChangeNotifier {
 
     print('token save: ${user?.loginResult?.token}');
     print('name save: ${user?.loginResult?.name}');
+    // print('(save)initial loc : $initialLoc');
     notifyListeners();
   }
 
@@ -114,6 +137,7 @@ class AuthProvider extends ChangeNotifier {
     final userId = prefs.getString(kuserId);
     final name = prefs.getString(kuserName);
     final token = prefs.getString(kToken);
+    notifyListeners();
 
     if (userId == null || name == null || token == null) {
       return;

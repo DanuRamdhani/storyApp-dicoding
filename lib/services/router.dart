@@ -11,52 +11,52 @@ import 'package:story_app/views/list_story.dart';
 class AppRouter {
   static final router = GoRouter(
     debugLogDiagnostics: true,
+    initialLocation: '/auth',
     routes: [
       GoRoute(
         name: AuthScreen.routeName,
         path: '/auth',
-        pageBuilder: (context, state) => const MaterialPage(
-          // key: state.pageKey,
-          child: AuthScreen(),
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const AuthScreen(),
         ),
       ),
       GoRoute(
         name: ListStoryScreen.routeName,
-        path: '/',
-        pageBuilder: (context, state) => const MaterialPage(
-          // key: state.pageKey,
-          child: ListStoryScreen(),
+        path: '/list-story',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const ListStoryScreen(),
         ),
         routes: [
           GoRoute(
             name: DetailStoryScreen.routeName,
             path: 'detail-story',
-            pageBuilder: (context, state) => const MaterialPage(
-              // key: state.pageKey,
-              child: DetailStoryScreen(),
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: const DetailStoryScreen(),
             ),
           ),
           GoRoute(
             name: AddStoryScreen.routeName,
             path: 'add-story',
-            pageBuilder: (context, state) => const MaterialPage(
-              // key: state.pageKey,
-              child: AddStoryScreen(),
+            pageBuilder: (context, state) => MaterialPage(
+              key: state.pageKey,
+              child: const AddStoryScreen(),
             ),
           ),
         ],
       ),
     ],
-    errorPageBuilder: (context, state) => const MaterialPage(
-      // key: state.pageKey,
-      child: ErrorScreen(),
+    errorPageBuilder: (context, state) => MaterialPage(
+      key: state.pageKey,
+      child: const ErrorScreen(),
     ),
     refreshListenable: AuthProvider(),
     redirect: (context, state) async {
-      final authProv = context.watch<AuthProvider>();
-      // final authProv = Provider.of<AuthProvider>(context, listen: false);
-
-      // final logginIn = state.path == '/${AuthScreen.routeName}';
+      final authProv = Provider.of<AuthProvider>(context, listen: false);
+      final logginIn = state.matchedLocation == '/${AuthScreen.routeName}';
+      print('path : ${state.matchedLocation}');
 
       await authProv.getUserData();
 
@@ -64,10 +64,10 @@ class AppRouter {
       print('name router: ${authProv.user?.loginResult?.name}');
       final isLoggedIn = authProv.user?.loginResult?.token != null;
 
-      if (!isLoggedIn) {
-        return '/${AuthScreen.routeName}';
-      } else if (isLoggedIn) {
-        return '/';
+      if (!logginIn && !isLoggedIn) {
+        return '/auth';
+      } else if (logginIn && isLoggedIn) {
+        return '/list-story';
       } else {
         return null;
       }
