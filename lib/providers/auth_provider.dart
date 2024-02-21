@@ -66,10 +66,16 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       final body = await ApiService.register(
+        context,
         enteredEmail,
         enteredPassword,
         enteredFullname,
       );
+      if (body == null) {
+        isAuthenticating = false;
+        notifyListeners();
+        return;
+      }
 
       if (body.containsValue('User created')) {
         if (!context.mounted) return;
@@ -109,8 +115,6 @@ class AuthProvider extends ChangeNotifier {
     await prefs.remove(kuserName);
     await prefs.remove(kuserId);
     user = null;
-    print('token logout: ${user?.loginResult?.token}');
-    print('name logout: ${user?.loginResult?.name}');
     if (!context.mounted) return;
     context.goNamed(AuthScreen.routeName);
     notifyListeners();
@@ -119,15 +123,10 @@ class AuthProvider extends ChangeNotifier {
   Future<void> saveUserData() async {
     final prefs = await SharedPreferences.getInstance();
 
-    // if (user == null) return;
-
     await prefs.setString(kuserId, user!.loginResult!.userId);
     await prefs.setString(kuserName, user!.loginResult!.name);
     await prefs.setString(kToken, user!.loginResult!.token);
 
-    print('token save: ${user?.loginResult?.token}');
-    print('name save: ${user?.loginResult?.name}');
-    // print('(save)initial loc : $initialLoc');
     notifyListeners();
   }
 
@@ -152,8 +151,6 @@ class AuthProvider extends ChangeNotifier {
         'token': token,
       },
     });
-    print('token get : ${user?.loginResult?.token}');
-    print('name get : ${user?.loginResult?.name}');
     notifyListeners();
   }
 }
