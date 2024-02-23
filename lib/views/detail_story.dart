@@ -4,6 +4,7 @@ import 'package:story_app/extensions/context_extension.dart';
 import 'package:story_app/providers/auth_provider.dart';
 import 'package:story_app/providers/stories_provider.dart';
 import 'package:story_app/utils/response_state.dart';
+import 'package:story_app/widgets/detail_story_item.dart';
 
 class DetailStoryScreen extends StatelessWidget {
   const DetailStoryScreen({
@@ -18,7 +19,7 @@ class DetailStoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Detail Story')),
+      appBar: AppBar(title: Text('Detail ${context.localizations.stories}')),
       body: Consumer2<StoriesProvider, AuthProvider>(
         builder: (context, storiesProv, authProv, child) {
           if (storiesProv.responseState == ResponseState.fail) {
@@ -45,21 +46,12 @@ class DetailStoryScreen extends StatelessWidget {
           if (storiesProv.responseState == ResponseState.succes) {
             final dStory = storiesProv.storyDetail!.story;
 
-            return Column(
-              children: [
-                Image.network(
-                  dStory.photoUrl,
-                  height: context.width,
-                  width: context.width,
-                  fit: BoxFit.cover,
-                ),
-                Text(dStory.name),
-                Text(dStory.description),
-              ],
-            );
+            return DetailStoryItem(dStory: dStory);
           }
 
-          return const Center(child: CircularProgressIndicator());
+          return Center(
+            child: Image.asset('assets/gif/spin.gif', height: 70),
+          );
         },
       ),
     );

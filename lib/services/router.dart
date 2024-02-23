@@ -7,48 +7,88 @@ import 'package:story_app/views/auth.dart';
 import 'package:story_app/views/detail_story.dart';
 import 'package:story_app/views/error.dart';
 import 'package:story_app/views/list_story.dart';
+import 'package:story_app/views/main_wrapper.dart';
+import 'package:story_app/views/settings.dart';
 
 class AppRouter {
+  static final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  static final _rootNavigatorHome =
+      GlobalKey<NavigatorState>(debugLabel: 'shellHome');
+  static final _rootNavigatorAdd =
+      GlobalKey<NavigatorState>(debugLabel: 'shellAdd');
+  static final _rootNavigatorSetting =
+      GlobalKey<NavigatorState>(debugLabel: 'shellSetting');
+
   static final router = GoRouter(
     debugLogDiagnostics: true,
     initialLocation: '/',
+    navigatorKey: _rootNavigatorKey,
     routes: [
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            MainWrapper(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            navigatorKey: _rootNavigatorHome,
+            routes: [
+              GoRoute(
+                name: ListStoryScreen.routeName,
+                path: '/list-story',
+                pageBuilder: (context, state) => MaterialPage(
+                  key: state.pageKey,
+                  child: const ListStoryScreen(),
+                ),
+                routes: [
+                  GoRoute(
+                    name: DetailStoryScreen.routeName,
+                    path: ':id',
+                    pageBuilder: (context, state) {
+                      return MaterialPage(
+                        key: state.pageKey,
+                        child: DetailStoryScreen(
+                          storyId: state.pathParameters['id']!,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _rootNavigatorAdd,
+            routes: [
+              GoRoute(
+                name: AddStoryScreen.routeName,
+                path: '/add-story',
+                pageBuilder: (context, state) => MaterialPage(
+                  key: state.pageKey,
+                  child: const AddStoryScreen(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _rootNavigatorSetting,
+            routes: [
+              GoRoute(
+                name: SettingsScreen.routeName,
+                path: '/settings',
+                pageBuilder: (context, state) => MaterialPage(
+                  key: state.pageKey,
+                  child: const SettingsScreen(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
       GoRoute(
         name: AuthScreen.routeName,
         path: '/',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
           child: const AuthScreen(),
-        ),
-      ),
-      GoRoute(
-        name: ListStoryScreen.routeName,
-        path: '/list-story',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: const ListStoryScreen(),
-        ),
-        routes: [
-          GoRoute(
-            name: DetailStoryScreen.routeName,
-            path: ':id',
-            pageBuilder: (context, state) {
-              return MaterialPage(
-                key: state.pageKey,
-                child: DetailStoryScreen(
-                  storyId: state.pathParameters['id']!,
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      GoRoute(
-        name: AddStoryScreen.routeName,
-        path: '/add-story',
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: const AddStoryScreen(),
         ),
       ),
     ],

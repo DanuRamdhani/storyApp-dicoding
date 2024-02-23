@@ -13,22 +13,45 @@ class AddStoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text('Add Story')),
+      appBar: AppBar(
+        title: Text(context.localizations.addStory),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: Consumer2<StoriesProvider, AuthProvider>(
           builder: (context, storiesProv, authProv, child) {
-            final userToken = authProv.user!.loginResult!.token;
+            final userToken = authProv.user?.loginResult?.token;
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: context.color.primary.withOpacity(.4),
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: TextFormField(
+                    maxLines: 3,
+                    controller: storiesProv.descCtrl,
+                    decoration: InputDecoration(
+                      labelText: context.localizations.labelDesc,
+                      alignLabelWithHint: true,
+                      border: InputBorder.none,
+                      isCollapsed: true,
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
                   height: context.width,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      width: 2,
-                      color: Colors.black38,
+                      color: context.color.primary.withOpacity(.4),
                     ),
                     borderRadius: BorderRadius.circular(8),
                     image: storiesProv.pickedImage != null
@@ -38,50 +61,53 @@ class AddStoryScreen extends StatelessWidget {
                           )
                         : null,
                   ),
+                  child: storiesProv.pickedImage == null
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.image_outlined,
+                              color: context.color.primary.withOpacity(.4),
+                              size: 80,
+                            ),
+                            Text(
+                              context.localizations.noImage,
+                              style: context.text.headlineMedium!.copyWith(
+                                color: context.color.primary.withOpacity(.4),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : const SizedBox(),
                 ),
                 const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 2,
-                      color: Colors.black38,
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => storiesProv.takeImageCamera(context),
+                        child: const Text('Camera'),
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: TextFormField(
-                    maxLines: 3,
-                    controller: storiesProv.descCtrl,
-                    decoration: const InputDecoration(
-                      alignLabelWithHint: true,
-                      hintText: 'Enter your desc here...',
-                      border: InputBorder.none,
-                      isCollapsed: true,
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => storiesProv.takeImageGallery(context),
+                        child: const Text('Gallery'),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                const Text(
-                  'Take Image From',
-                  textAlign: TextAlign.center,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    storiesProv.takeImageCamera();
-                  },
-                  child: const Text('Camera'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    storiesProv.takeImageGallery();
-                  },
-                  child: const Text('Gallery'),
-                ),
+                const Spacer(),
                 ElevatedButton(
                   onPressed: () async {
-                    await storiesProv.uploadStory(context, userToken);
+                    await storiesProv.uploadStory(
+                      context,
+                      userToken ?? 'no token',
+                    );
                   },
-                  child: const Text('Upload'),
+                  child: Text(context.localizations.upload),
                 ),
               ],
             );

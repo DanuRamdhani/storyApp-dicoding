@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app/extensions/context_extension.dart';
@@ -20,11 +19,18 @@ class _CustomFormState extends State<CustomForm> {
           key: authProv.form,
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Email Addres',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  labelText: context.localizations.email,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  filled: true,
+                  fillColor: const Color.fromARGB(255, 245, 239, 232),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 autocorrect: false,
@@ -32,7 +38,7 @@ class _CustomFormState extends State<CustomForm> {
                   if (value == null ||
                       value.trim().isEmpty ||
                       !value.contains('@')) {
-                    return 'Please enter a valid email addres.';
+                    return context.localizations.validationEmail;
                   }
 
                   return null;
@@ -41,12 +47,18 @@ class _CustomFormState extends State<CustomForm> {
                   authProv.enteredEmail = newValue!;
                 },
               ),
-              if (!authProv.isLoginForm) const SizedBox(height: 8),
+              if (!authProv.isLoginForm) const SizedBox(height: 16),
               if (!authProv.isLoginForm)
                 TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Fullname',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    labelText: context.localizations.name,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    filled: true,
+                    fillColor: const Color.fromARGB(255, 245, 239, 232),
                   ),
                   keyboardType: TextInputType.name,
                   autocorrect: false,
@@ -54,7 +66,7 @@ class _CustomFormState extends State<CustomForm> {
                     if (value == null ||
                         value.trim().isEmpty ||
                         value.trim().length < 4) {
-                      return 'Fullname must be at least 4 characters long.';
+                      return context.localizations.validationName;
                     }
 
                     return null;
@@ -63,20 +75,30 @@ class _CustomFormState extends State<CustomForm> {
                     authProv.enteredFullname = newValue!;
                   },
                 ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               TextFormField(
                 decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: const OutlineInputBorder(),
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  labelText: context.localizations.password,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  filled: true,
+                  fillColor: const Color.fromARGB(255, 245, 239, 232),
                   suffixIcon: IconButton(
                     onPressed: authProv.isCantSeePwChange,
-                    icon: const Icon(Icons.remove_red_eye_rounded),
+                    icon: Icon(
+                      authProv.isCantSeePw
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
                   ),
                 ),
                 obscureText: authProv.isCantSeePw,
                 validator: (value) {
                   if (value == null || value.trim().length < 8) {
-                    return 'Password must be at least 8 characters long.';
+                    return context.localizations.validationPw;
                   }
 
                   return null;
@@ -85,47 +107,47 @@ class _CustomFormState extends State<CustomForm> {
                   authProv.enteredPassword = newValue!;
                 },
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () => authProv.submit(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: context.color.primary,
-                  foregroundColor: Colors.white,
+                  fixedSize: const Size.fromHeight(46),
                 ),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Center(
-                    child: authProv.isAuthenticating
-                        ? SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              backgroundColor: context.color.onPrimary,
-                            ),
-                          )
-                        : Text(authProv.isLoginForm ? 'Log in' : 'Sign up'),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              RichText(
-                text: TextSpan(
-                  text: authProv.isLoginForm
-                      ? 'Create an account!  '
-                      : 'Already have an account?  ',
-                  style: TextStyle(
-                    color: context.color.onBackground,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: authProv.isLoginForm ? 'Signup' : 'Login',
-                      style: TextStyle(
-                        color: context.color.primary,
+                child: authProv.isAuthenticating
+                    ? SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          backgroundColor: context.color.onPrimary,
+                        ),
+                      )
+                    : Text(
+                        authProv.isLoginForm
+                            ? context.localizations.loginButton
+                            : context.localizations.registerButton,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = authProv.isLoginChange,
-                    ),
-                  ],
+              ),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed:
+                    authProv.isAuthenticating ? null : authProv.isLoginChange,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 245, 239, 232),
+                  foregroundColor: Colors.black,
+                  fixedSize: const Size.fromHeight(46),
+                ),
+                child: Text(
+                  authProv.isLoginForm
+                      ? context.localizations.loginGoButton
+                      : context.localizations.regGoButton,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

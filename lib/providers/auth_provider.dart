@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:story_app/extensions/context_extension.dart';
 import 'package:story_app/models/user.dart';
 import 'package:story_app/services/api_service.dart';
 import 'package:story_app/utils/const.dart';
 import 'package:story_app/views/auth.dart';
 import 'package:story_app/views/list_story.dart';
+import 'package:story_app/widgets/custom_snackbar.dart';
 
 class AuthProvider extends ChangeNotifier {
   final form = GlobalKey<FormState>();
@@ -55,12 +57,7 @@ class AuthProvider extends ChangeNotifier {
         context.goNamed(ListStoryScreen.routeName);
         await saveUserData();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${body['message']}'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        customSnackBar(context, '${body['message']}');
       }
       isAuthenticating = false;
       notifyListeners();
@@ -96,19 +93,14 @@ class AuthProvider extends ChangeNotifier {
         notifyListeners();
       } else {
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${body['message']}'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        customSnackBar(context, '${body['message']}');
       }
       isAuthenticating = false;
       notifyListeners();
     }
   }
 
-  Future<void> logout(BuildContext context) async {
+  Future<void> _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.remove(kToken);
@@ -118,6 +110,38 @@ class AuthProvider extends ChangeNotifier {
     if (!context.mounted) return;
     context.goNamed(AuthScreen.routeName);
     notifyListeners();
+  }
+
+  void showLogoutDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          actionsAlignment: MainAxisAlignment.spaceEvenly,
+          title:
+              Text(context.localizations.logout, textAlign: TextAlign.center),
+          content: Text(
+            context.localizations.logoutDesc,
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                context.pop();
+              },
+              child: Text(context.localizations.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () => _logout(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+              ),
+              child: Text(context.localizations.logout),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> saveUserData() async {

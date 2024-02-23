@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:story_app/l10n/app_localizations.dart';
 
 extension ContextExt on BuildContext {
   ThemeData get theme => Theme.of(this);
@@ -11,4 +12,6 @@ extension ContextExt on BuildContext {
   Size get size => mediaQuery.size;
   double get width => size.width;
   double get height => size.height;
+
+  AppLocalizations get localizations => AppLocalizations.of(this)!;
 }

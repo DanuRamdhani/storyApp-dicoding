@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:story_app/utils/const.dart';
 import 'package:story_app/utils/typedef.dart';
+import 'package:story_app/widgets/custom_snackbar.dart';
 
 class ApiService {
   static Future<DataMap?> register(
@@ -27,13 +28,7 @@ class ApiService {
       return jsonDecode(response.body) as DataMap;
     } catch (e) {
       if (!context.mounted) return null;
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No interner connection!'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      customSnackBar(context, 'No internet connection!');
       return null;
     }
   }
@@ -55,13 +50,7 @@ class ApiService {
       return jsonDecode(response.body) as DataMap;
     } catch (e) {
       if (!context.mounted) return null;
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No interner connection!'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      customSnackBar(context, 'No internet connection!');
       return null;
     }
   }
@@ -97,40 +86,25 @@ class ApiService {
     double? lat,
     double? lon,
   ) async {
-    try {
-      final request =
-          http.MultipartRequest('POST', Uri.parse('$baseUrl/stories'));
+    final request =
+        http.MultipartRequest('POST', Uri.parse('$baseUrl/stories'));
 
-      request.headers.addAll({
-        'Content-Type': 'multipart/form-data',
-        'Authorization': 'Bearer $token',
-      });
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer $token',
+    });
 
-      request.fields.addAll({
-        'description': desc,
-        // 'lat': lat.toString(),
-        // 'lon': lon.toString(),
-      });
+    request.fields.addAll({
+      'description': desc,
+    });
 
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'photo',
-          photo.path,
-        ),
-      );
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'photo',
+        photo.path,
+      ),
+    );
 
-      final response = await request.send();
-      print(response.statusCode);
-      print('Response body: ${await response.stream.bytesToString()}');
-    } catch (e) {
-      if (!context.mounted) return null;
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No interner connection!'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
+    await request.send();
   }
 }
