@@ -1,8 +1,7 @@
-import 'app_localizations.dart';
+import 'package:story_app/l10n/app_localizations.dart';
 
-/// The translations for English (`en`).
 class AppLocalizationsEn extends AppLocalizations {
-  AppLocalizationsEn([String locale = 'en']) : super(locale);
+  AppLocalizationsEn([super.locale = 'en']);
 
   @override
   String get titleLogin => 'Welcome Back';

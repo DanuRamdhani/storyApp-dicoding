@@ -15,7 +15,6 @@ class AuthScreen extends StatelessWidget {
     final authProv = context.watch<AuthProvider>();
     return Scaffold(
       appBar: AppBar(
-        // surfaceTintColor: Colors.transparent,
         actions: const [
           FlagIconWidget(),
           SizedBox(width: 16),
