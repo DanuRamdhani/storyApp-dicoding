@@ -47,39 +47,42 @@ class AddStoryScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Container(
-                  height: context.width,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: context.color.primary.withOpacity(.4),
+                Flexible(
+                  flex: 4,
+                  child: Container(
+                    height: context.width,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: context.color.primary.withOpacity(.4),
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                      image: storiesProv.pickedImage != null
+                          ? DecorationImage(
+                              image: FileImage(storiesProv.pickedImage!),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
                     ),
-                    borderRadius: BorderRadius.circular(8),
-                    image: storiesProv.pickedImage != null
-                        ? DecorationImage(
-                            image: FileImage(storiesProv.pickedImage!),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                  ),
-                  child: storiesProv.pickedImage == null
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.image_outlined,
-                              color: context.color.primary.withOpacity(.4),
-                              size: 80,
-                            ),
-                            Text(
-                              context.localizations.noImage,
-                              style: context.text.headlineMedium!.copyWith(
+                    child: storiesProv.pickedImage == null
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.image_outlined,
                                 color: context.color.primary.withOpacity(.4),
-                                fontWeight: FontWeight.bold,
+                                size: 80,
                               ),
-                            ),
-                          ],
-                        )
-                      : const SizedBox(),
+                              Text(
+                                context.localizations.noImage,
+                                style: context.text.headlineMedium!.copyWith(
+                                  color: context.color.primary.withOpacity(.4),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          )
+                        : const SizedBox(),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Row(

@@ -27,8 +27,7 @@ class SettingsScreen extends StatelessWidget {
           return SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(8).copyWith(top: 40),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              child: ListView(
                 children: [
                   CircleAvatar(
                     maxRadius: 32,
