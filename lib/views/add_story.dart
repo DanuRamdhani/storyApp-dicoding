@@ -101,13 +101,20 @@ class AddStoryScreen extends StatelessWidget {
                 ),
                 const Spacer(),
                 ElevatedButton(
-                  onPressed: () async {
-                    await storiesProv.uploadStory(
-                      context,
-                      userToken ?? 'no token',
-                    );
-                  },
-                  child: Text(context.localizations.upload),
+                  onPressed: storiesProv.isUploading
+                      ? null
+                      : () async {
+                          await storiesProv.uploadStory(
+                            context,
+                            userToken ?? 'no token',
+                          );
+                        },
+                  child: storiesProv.isUploading
+                      ? const SizedBox.square(
+                          dimension: 20,
+                          child: CircularProgressIndicator(),
+                        )
+                      : Text(context.localizations.upload),
                 ),
               ],
             );

@@ -1,7 +1,8 @@
-import 'package:story_app/l10n/app_localizations.dart';
+import 'app_localizations.dart';
 
+/// The translations for Indonesian (`id`).
 class AppLocalizationsId extends AppLocalizations {
-  AppLocalizationsId([super.locale = 'id']);
+  AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
   String get titleLogin => 'Selamat Datang';
@@ -37,8 +38,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get validationName => 'Nama harus terdiri dari minimal 4 karakter.';
 
   @override
-  String get validationPw =>
-      'Kata sandi harus terdiri dari minimal 8 karakter.';
+  String get validationPw => 'Kata sandi harus terdiri dari minimal 8 karakter.';
 
   @override
   String get stories => 'Cerita';

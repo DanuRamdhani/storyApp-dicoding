@@ -27,6 +27,8 @@ class StoriesProvider extends ChangeNotifier {
   double? lat;
   double? lon;
 
+  bool isUploading = false;
+
   ResponseState responseState = ResponseState.initial;
 
   Future<void> getAllStories(BuildContext context) async {
@@ -71,10 +73,14 @@ class StoriesProvider extends ChangeNotifier {
     String token,
   ) async {
     final tabProv = context.read<TabProvider>();
+    isUploading = true;
+    notifyListeners();
 
     try {
       if (descCtrl.text.trim().isEmpty || pickedImage == null) {
         customSnackBar(context, 'Please enter description and image');
+        isUploading = false;
+        notifyListeners();
         return;
       }
 
@@ -93,11 +99,14 @@ class StoriesProvider extends ChangeNotifier {
       pickedImage = null;
       descCtrl.clear();
       await getAllStories(context);
+      isUploading = false;
+      notifyListeners();
     } catch (e) {
       if (!context.mounted) return;
+      isUploading = false;
       customSnackBar(context, 'No internet connections!');
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   Future<void> takeImageGallery(BuildContext context) async {

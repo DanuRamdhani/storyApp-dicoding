@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:story_app/extensions/context_extension.dart';
 import 'package:story_app/models/story_detail.dart';
+import 'package:story_app/providers/localization_provider.dart';
 
 class DetailStoryItem extends StatelessWidget {
   const DetailStoryItem({required this.dStory, super.key});
@@ -11,6 +14,10 @@ class DetailStoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localProv = context.read<LocalizationProvider>();
+    final dateFormated = DateFormat.yMMMEd(localProv.locale.languageCode)
+        .format(dStory.createdAt);
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +52,15 @@ class DetailStoryItem extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
+                const SizedBox(height: 4),
                 Text(dStory.description),
+                const SizedBox(height: 4),
+                Text(
+                  dateFormated,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
