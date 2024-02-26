@@ -6,6 +6,7 @@ import 'package:story_app/views/add_story.dart';
 import 'package:story_app/views/auth.dart';
 import 'package:story_app/views/detail_story.dart';
 import 'package:story_app/views/error.dart';
+import 'package:story_app/views/google_map.dart';
 import 'package:story_app/views/list_story.dart';
 import 'package:story_app/views/main_wrapper.dart';
 import 'package:story_app/views/settings.dart';
@@ -65,6 +66,16 @@ class AppRouter {
                   key: state.pageKey,
                   child: const AddStoryScreen(),
                 ),
+                routes: [
+                  GoRoute(
+                    name: GoogleMapScreen.routeName,
+                    path: 'map',
+                    pageBuilder: (context, state) => MaterialPage(
+                      key: state.pageKey,
+                      child: const GoogleMapScreen(),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

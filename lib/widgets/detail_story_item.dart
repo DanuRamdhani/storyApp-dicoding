@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:story_app/extensions/context_extension.dart';
 import 'package:story_app/models/story_detail.dart';
 import 'package:story_app/providers/localization_provider.dart';
+import 'package:story_app/providers/stories_provider.dart';
 
 class DetailStoryItem extends StatelessWidget {
   const DetailStoryItem({required this.dStory, super.key});
@@ -15,6 +16,7 @@ class DetailStoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localProv = context.read<LocalizationProvider>();
+    final storiesProv = context.read<StoriesProvider>();
     final dateFormated = DateFormat.yMMMEd(localProv.locale.languageCode)
         .format(dStory.createdAt);
 
@@ -48,8 +50,8 @@ class DetailStoryItem extends StatelessWidget {
               children: [
                 Text(
                   dStory.name,
-                  style: context.text.headlineSmall!.copyWith(
-                    fontWeight: FontWeight.w500,
+                  style: context.text.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -61,6 +63,19 @@ class DetailStoryItem extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+                if (dStory.lat != null && dStory.lon != null)
+                  Row(
+                    children: [
+                      Text(
+                        storiesProv.address!,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Icon(Icons.location_on, size: 16),
+                    ],
+                  ),
                 const SizedBox(height: 16),
                 Row(
                   children: [

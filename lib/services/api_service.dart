@@ -96,6 +96,8 @@ class ApiService {
 
     request.fields.addAll({
       'description': desc,
+      'lat' : '$lat',
+      'lon' : '$lon',
     });
 
     request.files.add(

@@ -3,12 +3,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app/models/stories.dart';
 import 'package:story_app/models/story_detail.dart';
 import 'package:story_app/providers/auth_provider.dart';
+import 'package:story_app/providers/location.dart';
 import 'package:story_app/providers/tab_provider.dart';
 import 'package:story_app/services/api_service.dart';
 import 'package:story_app/utils/response_state.dart';
@@ -30,6 +32,9 @@ class StoriesProvider extends ChangeNotifier {
   bool isUploading = false;
 
   ResponseState responseState = ResponseState.initial;
+
+  geo.Placemark? placemark;
+  String? address;
 
   Future<void> getAllStories(BuildContext context) async {
     final authProv = context.read<AuthProvider>();
@@ -60,9 +65,22 @@ class StoriesProvider extends ChangeNotifier {
       if (result == null) return;
 
       _storyDetail = StoryDetail.fromJson(result);
+      if (_storyDetail?.story.lat != null) {
+        final info = await geo.placemarkFromCoordinates(
+          _storyDetail!.story.lat!,
+          _storyDetail!.story.lon!,
+        );
+        final place = info[0];
+        address = '${place.subLocality}, ${place.locality}, ${place.country}';
+        debugPrint('address: $address');
+        notifyListeners();
+      }
+
       responseState = ResponseState.succes;
       notifyListeners();
     } catch (e) {
+      if (!context.mounted) return;
+      customSnackBar(context, e.toString());
       responseState = ResponseState.fail;
       notifyListeners();
     }
@@ -96,8 +114,12 @@ class StoriesProvider extends ChangeNotifier {
       if (!context.mounted) return;
       tabProv.selectedIndex = 0;
       context.goNamed(ListStoryScreen.routeName);
+
       pickedImage = null;
       descCtrl.clear();
+      lat = null;
+      lon = null;
+
       await getAllStories(context);
       isUploading = false;
       notifyListeners();
@@ -166,5 +188,12 @@ class StoriesProvider extends ChangeNotifier {
     } while (quality >= 10);
 
     return file;
+  }
+
+  void addLocation(BuildContext context) {
+    final locProv = context.read<LocationProvider>();
+    lat = locProv.initialLoc.latitude;
+    lon = locProv.initialLoc.longitude;
+    notifyListeners();
   }
 }
