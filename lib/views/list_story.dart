@@ -15,10 +15,30 @@ class ListStoryScreen extends StatefulWidget {
 }
 
 class _ListStoryScreenState extends State<ListStoryScreen> {
+  final ScrollController scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
-    context.read<StoriesProvider>().getAllStories(context);
+    final storiesProv = context.read<StoriesProvider>();
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        if (storiesProv.pageItems != null) {
+          storiesProv.getAllStories(context);
+          print('api call');
+        }
+      }
+    });
+
+    Future.microtask(() async => storiesProv.getAllStories(context));
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -30,7 +50,19 @@ class _ListStoryScreenState extends State<ListStoryScreen> {
       ),
       body: Consumer<StoriesProvider>(
         builder: (context, storiesProv, _) {
-          if (storiesProv.responseState == ResponseState.fail) {
+          if (storiesProv.responseState == ResponseState.loading &&
+              storiesProv.pageItems == 1) {
+            return Center(
+              child: Image.asset('assets/gif/spin.gif', height: 70),
+            );
+          } else if (storiesProv.responseState == ResponseState.succes) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                await storiesProv.refreshStory(context);
+              },
+              child: ListStoryItem(scrollController: scrollController),
+            );
+          } else if (storiesProv.responseState == ResponseState.fail) {
             return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -49,22 +81,11 @@ class _ListStoryScreenState extends State<ListStoryScreen> {
                 ],
               ),
             );
-          }
-
-          if (storiesProv.responseState == ResponseState.succes) {
-            return RefreshIndicator(
-              onRefresh: () async {
-                await storiesProv.getAllStories(context);
-              },
-              child: ListStoryItem(
-                listStory: storiesProv.stories!.listStory,
-              ),
+          } else {
+            return const Center(
+              child: Text('No data'),
             );
           }
-
-          return Center(
-            child: Image.asset('assets/gif/spin.gif', height: 70),
-          );
         },
       ),
     );

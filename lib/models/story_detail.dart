@@ -10,12 +10,12 @@ class StoryDetail {
   factory StoryDetail.fromJson(Map<String, dynamic> json) => StoryDetail(
         error: json['error'] as bool,
         message: json['message'] as String,
-        story: Story.fromJson(json['story'] as DataMap),
+        story: DStory.fromJson(json['story'] as DataMap),
       );
 
   bool error;
   String message;
-  Story story;
+  DStory story;
 
   Map<String, dynamic> toJson() => {
         'error': error,
@@ -24,8 +24,8 @@ class StoryDetail {
       };
 }
 
-class Story {
-  Story({
+class DStory {
+  DStory({
     required this.id,
     required this.name,
     required this.description,
@@ -35,7 +35,7 @@ class Story {
     this.lon,
   });
 
-  factory Story.fromJson(Map<String, dynamic> json) => Story(
+  factory DStory.fromJson(Map<String, dynamic> json) => DStory(
         id: json['id'] as String,
         name: json['name'] as String,
         description: json['description'] as String,

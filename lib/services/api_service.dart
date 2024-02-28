@@ -57,10 +57,12 @@ class ApiService {
 
   static Future<DataMap?> getAllStories(
     BuildContext context,
-    String token,
-  ) async {
+    String token, [
+    int page = 1,
+    int size = 5,
+  ]) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/stories'),
+      Uri.parse('$baseUrl/stories?page=$page&size=$size'),
       headers: {'Authorization': 'Bearer $token'},
     );
     return jsonDecode(response.body) as DataMap;
@@ -96,8 +98,8 @@ class ApiService {
 
     request.fields.addAll({
       'description': desc,
-      'lat' : '$lat',
-      'lon' : '$lon',
+      'lat': '$lat',
+      'lon': '$lon',
     });
 
     request.files.add(

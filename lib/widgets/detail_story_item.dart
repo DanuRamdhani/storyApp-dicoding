@@ -11,7 +11,7 @@ import 'package:story_app/providers/stories_provider.dart';
 class DetailStoryItem extends StatelessWidget {
   const DetailStoryItem({required this.dStory, super.key});
 
-  final Story dStory;
+  final DStory dStory;
 
   @override
   Widget build(BuildContext context) {
@@ -66,11 +66,13 @@ class DetailStoryItem extends StatelessWidget {
                 if (dStory.lat != null && dStory.lon != null)
                   Row(
                     children: [
-                      Text(
-                        storiesProv.address!,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
+                      Flexible(
+                        child: Text(
+                          storiesProv.address!,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                       const Icon(Icons.location_on, size: 16),

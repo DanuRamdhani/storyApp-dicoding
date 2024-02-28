@@ -36,21 +36,46 @@ class StoriesProvider extends ChangeNotifier {
   geo.Placemark? placemark;
   String? address;
 
+  int? pageItems = 1;
+  int sizeItems = 5;
+
+  List<Story> storyList = [];
+
   Future<void> getAllStories(BuildContext context) async {
     final authProv = context.read<AuthProvider>();
     final token = authProv.user!.loginResult!.token;
-    responseState = ResponseState.loading;
     try {
-      final result = await ApiService.getAllStories(context, token);
-      if (result == null) return;
-
-      _stories = Stories.fromJson(result);
-      responseState = ResponseState.succes;
+    if (pageItems == 1) {
+      responseState = ResponseState.loading;
       notifyListeners();
+    }
+
+    final result =
+        await ApiService.getAllStories(context, token, pageItems!, sizeItems);
+
+    _stories = Stories.fromJson(result!);
+    storyList.addAll(_stories!.listStory);
+    responseState = ResponseState.succes;
+
+    if (_stories!.listStory.length < sizeItems) {
+      pageItems = null;
+    } else {
+      pageItems = pageItems! + 1;
+    }
+
+    notifyListeners();
     } catch (e) {
+      print('ERROR : $e');
       responseState = ResponseState.fail;
       notifyListeners();
     }
+  }
+
+  Future<void> refreshStory(BuildContext context) async {
+    storyList.clear();
+    pageItems = 1;
+    sizeItems = 5;
+    await getAllStories(context);
   }
 
   Future<void> getStoryById(
@@ -79,8 +104,6 @@ class StoriesProvider extends ChangeNotifier {
       responseState = ResponseState.succes;
       notifyListeners();
     } catch (e) {
-      if (!context.mounted) return;
-      customSnackBar(context, e.toString());
       responseState = ResponseState.fail;
       notifyListeners();
     }
@@ -120,7 +143,7 @@ class StoriesProvider extends ChangeNotifier {
       lat = null;
       lon = null;
 
-      await getAllStories(context);
+      await refreshStory(context);
       isUploading = false;
       notifyListeners();
     } catch (e) {
