@@ -21,7 +21,7 @@ class DetailStoryScreen extends StatelessWidget {
       appBar: AppBar(title: Text('Detail ${context.localizations.stories}')),
       body: Consumer2<StoriesProvider, AuthProvider>(
         builder: (context, storiesProv, authProv, child) {
-          final state = storiesProv.responseState;
+          final state = storiesProv.responseStateD;
 
           return state.map(
             initial: (value) {

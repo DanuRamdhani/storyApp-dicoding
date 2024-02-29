@@ -3,9 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app/extensions/context_extension.dart';
+import 'package:story_app/models/response_state.dart';
 import 'package:story_app/providers/location.dart';
 import 'package:story_app/providers/stories_provider.dart';
-import 'package:story_app/models/response_state.dart';
 import 'package:story_app/widgets/placemark.dart';
 
 class GoogleMapScreen extends StatefulWidget {

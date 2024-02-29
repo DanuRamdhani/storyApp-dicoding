@@ -9,16 +9,11 @@ import 'package:story_app/extensions/context_extension.dart';
 import 'package:story_app/providers/stories_provider.dart';
 import 'package:story_app/views/detail_story.dart';
 
-class ListStoryItem extends StatefulWidget {
+class ListStoryItem extends StatelessWidget {
   const ListStoryItem({required this.scrollController, super.key});
 
   final ScrollController scrollController;
 
-  @override
-  State<ListStoryItem> createState() => _ListStoryItemState();
-}
-
-class _ListStoryItemState extends State<ListStoryItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -26,9 +21,8 @@ class _ListStoryItemState extends State<ListStoryItem> {
       child: Consumer<StoriesProvider>(
         builder: (context, storiesProv, _) {
           return ListView.builder(
-            controller: widget.scrollController,
+            controller: scrollController,
             itemCount: storiesProv.storyList.length,
-            // + (storiesProv.pageItems != null ? 1 : 0),
             itemBuilder: (context, index) {
               final story = storiesProv.storyList[index];
 

@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app/models/response_state.dart';
+import 'package:story_app/models/response_state_detail.dart';
 import 'package:story_app/models/stories.dart';
 import 'package:story_app/models/story_detail.dart';
 import 'package:story_app/providers/auth_provider.dart';
@@ -32,6 +33,7 @@ class StoriesProvider extends ChangeNotifier {
   bool isUploading = false;
 
   ResponseState responseState = const ResponseState.initial();
+  ResponseStateDetail responseStateD = const ResponseStateDetail.initial();
 
   geo.Placemark? placemark;
   String? address;
@@ -65,7 +67,6 @@ class StoriesProvider extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      print('ERROR : $e');
       responseState = const ResponseState.error();
       notifyListeners();
     }
@@ -85,7 +86,7 @@ class StoriesProvider extends ChangeNotifier {
     final authProv = context.read<AuthProvider>();
     final token = authProv.user!.loginResult!.token;
     try {
-      responseState = const ResponseState.loading();
+      responseStateD = const ResponseStateDetail.loading();
       notifyListeners();
 
       final result = await ApiService.getDetailStory(context, token, id);
@@ -102,10 +103,10 @@ class StoriesProvider extends ChangeNotifier {
         address = '${place.subLocality}, ${place.locality}, ${place.country}';
       }
 
-      responseState = const ResponseState.loaded();
+      responseStateD = const ResponseStateDetail.loaded();
       notifyListeners();
     } catch (e) {
-      responseState = const ResponseState.error();
+      responseStateD = const ResponseStateDetail.error();
       notifyListeners();
     }
   }
