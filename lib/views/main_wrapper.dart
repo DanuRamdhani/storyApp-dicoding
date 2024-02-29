@@ -4,28 +4,23 @@ import 'package:provider/provider.dart';
 import 'package:story_app/extensions/context_extension.dart';
 import 'package:story_app/providers/tab_provider.dart';
 
-class MainWrapper extends StatefulWidget {
+class MainWrapper extends StatelessWidget {
   const MainWrapper({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 
   @override
-  State<MainWrapper> createState() => _MainWrapperState();
-}
-
-class _MainWrapperState extends State<MainWrapper> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SizedBox.expand(
-        child: widget.navigationShell,
+        child: navigationShell,
       ),
       bottomNavigationBar: Consumer<TabProvider>(
         builder: (context, tabProv, _) {
           return BottomNavigationBar(
             selectedItemColor: context.color.primary,
-            unselectedItemColor: context.color.primary,
+            unselectedItemColor: context.color.primary.withOpacity(.7),
             items: [
               BottomNavigationBarItem(
                 icon: const Icon(Icons.home_max_outlined),
@@ -42,7 +37,7 @@ class _MainWrapperState extends State<MainWrapper> {
             ],
             currentIndex: tabProv.selectedIndex,
             onTap: (index) {
-              tabProv.goToBranch(index, widget.navigationShell);
+              tabProv.goToBranch(index, navigationShell);
             },
           );
         },

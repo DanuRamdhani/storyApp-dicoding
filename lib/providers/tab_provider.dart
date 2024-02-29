@@ -9,6 +9,7 @@ class TabProvider extends ChangeNotifier {
       index,
       initialLocation: index == navigationShell.currentIndex,
     );
+    selectedIndex = index;
     notifyListeners();
   }
 }
