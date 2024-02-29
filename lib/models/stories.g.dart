@@ -6,7 +6,8 @@ part of 'stories.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Stories _$StoriesFromJson(Map<String, dynamic> json) => Stories(
+_$StoriesImpl _$$StoriesImplFromJson(Map<String, dynamic> json) =>
+    _$StoriesImpl(
       error: json['error'] as bool,
       message: json['message'] as String,
       listStory: (json['listStory'] as List<dynamic>)
@@ -14,13 +15,14 @@ Stories _$StoriesFromJson(Map<String, dynamic> json) => Stories(
           .toList(),
     );
 
-Map<String, dynamic> _$StoriesToJson(Stories instance) => <String, dynamic>{
+Map<String, dynamic> _$$StoriesImplToJson(_$StoriesImpl instance) =>
+    <String, dynamic>{
       'error': instance.error,
       'message': instance.message,
       'listStory': instance.listStory,
     };
 
-Story _$StoryFromJson(Map<String, dynamic> json) => Story(
+_$StoryImpl _$$StoryImplFromJson(Map<String, dynamic> json) => _$StoryImpl(
       id: json['id'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
@@ -30,7 +32,8 @@ Story _$StoryFromJson(Map<String, dynamic> json) => Story(
       lon: (json['lon'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$StoryToJson(Story instance) => <String, dynamic>{
+Map<String, dynamic> _$$StoryImplToJson(_$StoryImpl instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'description': instance.description,

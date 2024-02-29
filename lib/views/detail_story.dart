@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:story_app/extensions/context_extension.dart';
 import 'package:story_app/providers/auth_provider.dart';
 import 'package:story_app/providers/stories_provider.dart';
-import 'package:story_app/utils/response_state.dart';
 import 'package:story_app/widgets/detail_story_item.dart';
 
 class DetailStoryScreen extends StatelessWidget {
@@ -22,35 +21,41 @@ class DetailStoryScreen extends StatelessWidget {
       appBar: AppBar(title: Text('Detail ${context.localizations.stories}')),
       body: Consumer2<StoriesProvider, AuthProvider>(
         builder: (context, storiesProv, authProv, child) {
-          if (storiesProv.responseState == ResponseState.fail) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Caught an Error',
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  IconButton(
-                    onPressed: () async {
-                      await storiesProv.getStoryById(context, storyId);
-                    },
-                    icon: const Icon(Icons.refresh),
-                  ),
-                ],
-              ),
-            );
-          }
+          final state = storiesProv.responseState;
 
-          if (storiesProv.responseState == ResponseState.succes) {
-            final dStory = storiesProv.storyDetail!.story;
-
-            return DetailStoryItem(dStory: dStory);
-          }
-
-          return Center(
-            child: Image.asset('assets/gif/spin.gif', height: 70),
+          return state.map(
+            initial: (value) {
+              return const Center(child: Text('No data'));
+            },
+            loading: (value) {
+              return Center(
+                child: Image.asset('assets/gif/spin.gif', height: 70),
+              );
+            },
+            loaded: (value) {
+              final detailStory = storiesProv.storyDetail!.story;
+              return DetailStoryItem(dStory: detailStory);
+            },
+            error: (value) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Caught an Error',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    IconButton(
+                      onPressed: () async {
+                        await storiesProv.getStoryById(context, storyId);
+                      },
+                      icon: const Icon(Icons.refresh),
+                    ),
+                  ],
+                ),
+              );
+            },
           );
         },
       ),

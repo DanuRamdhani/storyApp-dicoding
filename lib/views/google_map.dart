@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:story_app/extensions/context_extension.dart';
 import 'package:story_app/providers/location.dart';
 import 'package:story_app/providers/stories_provider.dart';
-import 'package:story_app/utils/response_state.dart';
+import 'package:story_app/models/response_state.dart';
 import 'package:story_app/widgets/placemark.dart';
 
 class GoogleMapScreen extends StatefulWidget {
@@ -148,7 +148,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                     ],
                   ),
                 ),
-                if (locProv.response == ResponseState.loading)
+                if (locProv.response == const ResponseState.loading())
                   Container(
                     decoration: const BoxDecoration(
                       color: Colors.black45,

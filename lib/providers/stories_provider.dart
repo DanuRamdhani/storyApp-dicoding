@@ -7,13 +7,13 @@ import 'package:geocoding/geocoding.dart' as geo;
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:story_app/models/response_state.dart';
 import 'package:story_app/models/stories.dart';
 import 'package:story_app/models/story_detail.dart';
 import 'package:story_app/providers/auth_provider.dart';
 import 'package:story_app/providers/location.dart';
 import 'package:story_app/providers/tab_provider.dart';
 import 'package:story_app/services/api_service.dart';
-import 'package:story_app/utils/response_state.dart';
 import 'package:story_app/views/list_story.dart';
 import 'package:story_app/widgets/custom_snackbar.dart';
 
@@ -31,7 +31,7 @@ class StoriesProvider extends ChangeNotifier {
 
   bool isUploading = false;
 
-  ResponseState responseState = ResponseState.initial;
+  ResponseState responseState = const ResponseState.initial();
 
   geo.Placemark? placemark;
   String? address;
@@ -45,28 +45,28 @@ class StoriesProvider extends ChangeNotifier {
     final authProv = context.read<AuthProvider>();
     final token = authProv.user!.loginResult!.token;
     try {
-    if (pageItems == 1) {
-      responseState = ResponseState.loading;
+      if (pageItems == 1) {
+        responseState = const ResponseState.loading();
+        notifyListeners();
+      }
+
+      final result =
+          await ApiService.getAllStories(context, token, pageItems!, sizeItems);
+
+      _stories = Stories.fromJson(result!);
+      storyList.addAll(_stories!.listStory);
+      responseState = const ResponseState.loaded();
+
+      if (_stories!.listStory.length < sizeItems) {
+        pageItems = null;
+      } else {
+        pageItems = pageItems! + 1;
+      }
+
       notifyListeners();
-    }
-
-    final result =
-        await ApiService.getAllStories(context, token, pageItems!, sizeItems);
-
-    _stories = Stories.fromJson(result!);
-    storyList.addAll(_stories!.listStory);
-    responseState = ResponseState.succes;
-
-    if (_stories!.listStory.length < sizeItems) {
-      pageItems = null;
-    } else {
-      pageItems = pageItems! + 1;
-    }
-
-    notifyListeners();
     } catch (e) {
       print('ERROR : $e');
-      responseState = ResponseState.fail;
+      responseState = const ResponseState.error();
       notifyListeners();
     }
   }
@@ -84,12 +84,15 @@ class StoriesProvider extends ChangeNotifier {
   ) async {
     final authProv = context.read<AuthProvider>();
     final token = authProv.user!.loginResult!.token;
-    responseState = ResponseState.loading;
     try {
+      responseState = const ResponseState.loading();
+      notifyListeners();
+
       final result = await ApiService.getDetailStory(context, token, id);
       if (result == null) return;
 
       _storyDetail = StoryDetail.fromJson(result);
+
       if (_storyDetail?.story.lat != null) {
         final info = await geo.placemarkFromCoordinates(
           _storyDetail!.story.lat!,
@@ -97,14 +100,12 @@ class StoriesProvider extends ChangeNotifier {
         );
         final place = info[0];
         address = '${place.subLocality}, ${place.locality}, ${place.country}';
-        debugPrint('address: $address');
-        notifyListeners();
       }
 
-      responseState = ResponseState.succes;
+      responseState = const ResponseState.loaded();
       notifyListeners();
     } catch (e) {
-      responseState = ResponseState.fail;
+      responseState = const ResponseState.error();
       notifyListeners();
     }
   }

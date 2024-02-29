@@ -1,38 +1,27 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:story_app/utils/typedef.dart';
 
 part 'user.g.dart';
+part 'user.freezed.dart';
 
-@JsonSerializable()
-class User {
-  User({
-    this.error,
-    this.message,
-    this.loginResult,
-  });
+@freezed
+class User with _$User {
+  const factory User({
+    bool? error,
+    String? message,
+    LoginResult? loginResult,
+  }) = _User;
 
   factory User.fromJson(DataMap json) => _$UserFromJson(json);
-
-  final bool? error;
-  final String? message;
-  final LoginResult? loginResult;
-
-  DataMap toJson() => _$UserToJson(this);
 }
 
-@JsonSerializable()
-class LoginResult {
-  LoginResult({
-    required this.userId,
-    required this.name,
-    required this.token,
-  });
+@freezed
+class LoginResult with _$LoginResult {
+  const factory LoginResult({
+    required String userId,
+    required String name,
+    required String token,
+  }) = _LoginResult;
 
   factory LoginResult.fromJson(DataMap json) => _$LoginResultFromJson(json);
-
-  late final String userId;
-  late final String name;
-  late final String token;
-
-  DataMap toJson() => _$LoginResultToJson(this);
 }

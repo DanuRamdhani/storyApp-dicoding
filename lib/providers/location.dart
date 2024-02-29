@@ -3,7 +3,7 @@ import 'package:geocoding/geocoding.dart' as geo;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
-import 'package:story_app/utils/response_state.dart';
+import 'package:story_app/models/response_state.dart';
 import 'package:story_app/widgets/custom_snackbar.dart';
 
 class LocationProvider extends ChangeNotifier {
@@ -11,7 +11,7 @@ class LocationProvider extends ChangeNotifier {
 
   final Set<Marker> markers = {};
   MapType selectedMapType = MapType.normal;
-  ResponseState response = ResponseState.initial;
+  ResponseState response = const ResponseState.initial();
 
   geo.Placemark? placemark;
   String address = '';
@@ -61,7 +61,7 @@ class LocationProvider extends ChangeNotifier {
       }
     }
 
-    response = ResponseState.loading;
+    response = const ResponseState.loading();
     notifyListeners();
 
     locationData = await location.getLocation();
@@ -84,7 +84,7 @@ class LocationProvider extends ChangeNotifier {
       CameraUpdate.newLatLng(latLng),
     );
 
-    response = ResponseState.succes;
+    response = const ResponseState.loaded();
     notifyListeners();
   }
 
