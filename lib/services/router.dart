@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app/providers/auth_provider.dart';
+import 'package:story_app/providers/localization_provider.dart';
 import 'package:story_app/views/add_story.dart';
 import 'package:story_app/views/auth.dart';
 import 'package:story_app/views/detail_story.dart';
@@ -110,7 +111,9 @@ class AppRouter {
     refreshListenable: AuthProvider(),
     redirect: (context, state) async {
       final authProv = context.read<AuthProvider>();
+      final localProv = context.read<LocalizationProvider>();
       final logginIn = state.matchedLocation == '/';
+      await localProv.getLocale();
       await authProv.getUserData();
       final isLoggedIn = authProv.user?.loginResult?.token != null;
 

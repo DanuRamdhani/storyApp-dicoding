@@ -24,9 +24,7 @@ class FlagIconWidget extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
-            onTap: () {
-              localProv.setLocale(locale);
-            },
+            onTap: () async => localProv.setLocale(locale.languageCode),
           );
         }).toList(),
         onChanged: (_) {},
