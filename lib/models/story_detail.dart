@@ -1,5 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:story_app/utils/typedef.dart';
 
+part 'story_detail.g.dart';
+
+@JsonSerializable()
 class StoryDetail {
   StoryDetail({
     required this.error,
@@ -7,23 +11,17 @@ class StoryDetail {
     required this.story,
   });
 
-  factory StoryDetail.fromJson(Map<String, dynamic> json) => StoryDetail(
-        error: json['error'] as bool,
-        message: json['message'] as String,
-        story: DStory.fromJson(json['story'] as DataMap),
-      );
+  factory StoryDetail.fromJson(DataMap json) =>
+      _$StoryDetailFromJson(json);
 
   bool error;
   String message;
   DStory story;
 
-  Map<String, dynamic> toJson() => {
-        'error': error,
-        'message': message,
-        'story': story.toJson(),
-      };
+  DataMap toJson() => _$StoryDetailToJson(this);
 }
 
+@JsonSerializable()
 class DStory {
   DStory({
     required this.id,
@@ -35,15 +33,7 @@ class DStory {
     this.lon,
   });
 
-  factory DStory.fromJson(Map<String, dynamic> json) => DStory(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        description: json['description'] as String,
-        photoUrl: json['photoUrl'] as String,
-        createdAt: DateTime.parse(json['createdAt'] as String),
-        lat: json['lat'] != null ? json['lat'] as double : null,
-        lon: json['lon'] != null ? json['lon'] as double : null,
-      );
+  factory DStory.fromJson(DataMap json) => _$DStoryFromJson(json);
 
   String id;
   String name;
@@ -53,13 +43,5 @@ class DStory {
   double? lat;
   double? lon;
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'description': description,
-        'photoUrl': photoUrl,
-        'createdAt': createdAt.toIso8601String(),
-        'lat': lat,
-        'lon': lon,
-      };
+  DataMap toJson() => _$DStoryToJson(this);
 }

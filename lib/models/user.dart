@@ -1,5 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:story_app/utils/typedef.dart';
 
+part 'user.g.dart';
+
+@JsonSerializable()
 class User {
   User({
     this.error,
@@ -7,25 +11,16 @@ class User {
     this.loginResult,
   });
 
-  factory User.fromJson(DataMap json) => User(
-        error: json['error'] != null ? json['error'] as bool : null,
-        message: json['message'] != null ? json['message'] as String : null,
-        loginResult: json['loginResult'] != null
-            ? LoginResult.fromJson(json['loginResult'] as DataMap)
-            : null,
-      );
+  factory User.fromJson(DataMap json) => _$UserFromJson(json);
 
   final bool? error;
   final String? message;
   final LoginResult? loginResult;
 
-  DataMap toJson() => {
-        'error': error,
-        'message': message,
-        'loginResult': loginResult?.toJson(),
-      };
+  DataMap toJson() => _$UserToJson(this);
 }
 
+@JsonSerializable()
 class LoginResult {
   LoginResult({
     required this.userId,
@@ -33,19 +28,11 @@ class LoginResult {
     required this.token,
   });
 
-  factory LoginResult.fromJson(DataMap json) => LoginResult(
-        userId: json['userId'] as String,
-        name: json['name'] as String,
-        token: json['token'] as String,
-      );
+  factory LoginResult.fromJson(DataMap json) => _$LoginResultFromJson(json);
 
   late final String userId;
   late final String name;
   late final String token;
 
-  DataMap toJson() => {
-        'userId': userId,
-        'name': name,
-        'token': token,
-      };
+  DataMap toJson() => _$LoginResultToJson(this);
 }

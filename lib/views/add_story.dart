@@ -164,7 +164,7 @@ class AddStoryScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

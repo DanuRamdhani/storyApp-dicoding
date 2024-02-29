@@ -27,7 +27,6 @@ class _ListStoryScreenState extends State<ListStoryScreen> {
           scrollController.position.maxScrollExtent) {
         if (storiesProv.pageItems != null) {
           storiesProv.getAllStories(context);
-          print('api call');
         }
       }
     });
