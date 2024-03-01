@@ -24,21 +24,22 @@ class DetailStoryItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CachedNetworkImage(
-            imageUrl: dStory.photoUrl,
-            placeholder: (context, url) => Container(
-              alignment: Alignment.center,
-              height: context.width,
-              child: Image.asset(
+          Container(
+            alignment: Alignment.center,
+            color: Colors.grey.shade100,
+            height: context.width,
+            child: CachedNetworkImage(
+              imageUrl: dStory.photoUrl,
+              placeholder: (context, url) => Image.asset(
                 'assets/gif/spin.gif',
                 height: 70,
               ),
-            ),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
-            cacheManager: CacheManager(
-              Config(
-                'cache-detail-story',
-                stalePeriod: const Duration(seconds: 3),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+              cacheManager: CacheManager(
+                Config(
+                  'cache-detail-story',
+                  stalePeriod: const Duration(seconds: 3),
+                ),
               ),
             ),
           ),

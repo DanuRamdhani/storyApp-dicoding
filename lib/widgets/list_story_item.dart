@@ -71,7 +71,7 @@ class ListStoryItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
                         alignment: Alignment.center,
-                        color: Colors.black87,
+                        color: Colors.grey.shade100,
                         height: context.width,
                         child: CachedNetworkImage(
                           imageUrl: story.photoUrl,

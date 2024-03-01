@@ -68,7 +68,6 @@ class LocationProvider extends ChangeNotifier {
 
     locProv.initialLoc =
         LatLng(locationData.latitude!, locationData.longitude!);
-    debugPrint(locProv.initialLoc.toString());
     final latLng = LatLng(locationData.latitude!, locationData.longitude!);
     final info =
         await geo.placemarkFromCoordinates(latLng.latitude, latLng.longitude);
@@ -77,15 +76,19 @@ class LocationProvider extends ChangeNotifier {
     address = '${place.subLocality}, ${place.locality}, '
         '${place.postalCode}, ${place.country}';
     placemark = place;
-    notifyListeners();
 
     defineMarker(latLng, street, address);
-    await mapController.animateCamera(
-      CameraUpdate.newLatLng(latLng),
-    );
+    try {
+      await mapController.animateCamera(
+        CameraUpdate.newLatLng(latLng),
+      );
+    } catch (e) {
+      return;
+    }
 
     response = const ResponseState.loaded();
     notifyListeners();
+    return;
   }
 
   Future<void> onTapMap(

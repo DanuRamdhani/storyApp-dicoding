@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:story_app/app_config.dart';
 import 'package:story_app/extensions/context_extension.dart';
 import 'package:story_app/providers/auth_provider.dart';
 import 'package:story_app/providers/location.dart';
@@ -119,52 +120,54 @@ class AddStoryScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Positioned(
-                          left: 4,
-                          right: 4,
-                          bottom: 4,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black12,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                IconButton.filled(
-                                  style: IconButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                        if (AppConfig.instance.appType == AppType.pay)
+                          Positioned(
+                            left: 4,
+                            right: 4,
+                            bottom: 4,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.black12,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  IconButton.filled(
+                                    style: IconButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
                                     ),
+                                    onPressed: () {
+                                      context
+                                          .goNamed(GoogleMapScreen.routeName);
+                                    },
+                                    icon: const Icon(Icons.location_on),
                                   ),
-                                  onPressed: () {
-                                    context.goNamed(GoogleMapScreen.routeName);
-                                  },
-                                  icon: const Icon(Icons.location_on),
-                                ),
-                                const SizedBox(width: 4),
-                                if (storiesProv.lat != null &&
-                                    storiesProv.lon != null)
-                                  Flexible(
-                                    child: Text(
-                                      locProv.address,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
+                                  const SizedBox(width: 4),
+                                  if (storiesProv.lat != null &&
+                                      storiesProv.lon != null)
+                                    Flexible(
+                                      child: Text(
+                                        locProv.address,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          color: context.color.primary,
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    Text(
+                                      'No location yet',
                                       style: TextStyle(
                                         color: context.color.primary,
                                       ),
                                     ),
-                                  )
-                                else
-                                  Text(
-                                    'No location yet',
-                                    style: TextStyle(
-                                      color: context.color.primary,
-                                    ),
-                                  ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
