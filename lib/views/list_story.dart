@@ -29,8 +29,6 @@ class _ListStoryScreenState extends State<ListStoryScreen> {
         }
       }
     });
-
-    Future.microtask(() async => storiesProv.getAllStories(context));
   }
 
   @override

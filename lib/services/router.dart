@@ -11,6 +11,7 @@ import 'package:story_app/views/google_map.dart';
 import 'package:story_app/views/list_story.dart';
 import 'package:story_app/views/main_wrapper.dart';
 import 'package:story_app/views/settings.dart';
+import 'package:story_app/views/splash.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -103,6 +104,14 @@ class AppRouter {
           child: const AuthScreen(),
         ),
       ),
+      GoRoute(
+        name: SplashScreen.routeName,
+        path: '/splash',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const SplashScreen(),
+        ),
+      ),
     ],
     errorPageBuilder: (context, state) => MaterialPage(
       key: state.pageKey,
@@ -113,14 +122,17 @@ class AppRouter {
       final authProv = context.read<AuthProvider>();
       final localProv = context.read<LocalizationProvider>();
       final logginIn = state.matchedLocation == '/';
+      
       await localProv.getLocale();
       await authProv.getUserData();
+
       final isLoggedIn = authProv.user?.loginResult?.token != null;
 
       if (!logginIn && !isLoggedIn) {
         return '/';
       } else if (logginIn && isLoggedIn) {
-        return '/list-story';
+        return '/splash';
+        // return '/list-story';
       } else {
         return null;
       }

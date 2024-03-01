@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:story_app/extensions/context_extension.dart';
 import 'package:story_app/models/user.dart';
+import 'package:story_app/providers/tab_provider.dart';
 import 'package:story_app/services/api_service.dart';
 import 'package:story_app/utils/const.dart';
 import 'package:story_app/views/auth.dart';
-import 'package:story_app/views/list_story.dart';
+import 'package:story_app/views/splash.dart';
 import 'package:story_app/widgets/custom_snackbar.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -54,7 +56,7 @@ class AuthProvider extends ChangeNotifier {
 
       if (!context.mounted) return;
       if (body.containsValue('success')) {
-        context.goNamed(ListStoryScreen.routeName);
+        context.goNamed(SplashScreen.routeName);
         await saveUserData();
       } else {
         customSnackBar(context, '${body['message']}');
@@ -87,7 +89,7 @@ class AuthProvider extends ChangeNotifier {
         user = User.fromJson(body);
         if (body.containsValue('success')) {
           if (!context.mounted) return;
-          context.goNamed(ListStoryScreen.routeName);
+          context.goNamed(SplashScreen.routeName);
           await saveUserData();
         }
         notifyListeners();
@@ -101,6 +103,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> _logout(BuildContext context) async {
+    final tabProv = context.read<TabProvider>();
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.remove(kToken);
@@ -109,6 +112,7 @@ class AuthProvider extends ChangeNotifier {
     user = null;
     if (!context.mounted) return;
     context.goNamed(AuthScreen.routeName);
+    tabProv.selectedIndex = 0;
     notifyListeners();
   }
 
