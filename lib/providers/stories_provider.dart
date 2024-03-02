@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geocoding/geocoding.dart' as geo;
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app/models/response_state.dart';
@@ -27,8 +28,10 @@ class StoriesProvider extends ChangeNotifier {
 
   File? pickedImage;
   TextEditingController descCtrl = TextEditingController();
+
   double? lat;
   double? lon;
+  final Set<Marker> markers = {};
 
   bool isUploading = false;
 
@@ -219,6 +222,24 @@ class StoriesProvider extends ChangeNotifier {
     final locProv = context.read<LocationProvider>();
     lat = locProv.initialLoc.latitude;
     lon = locProv.initialLoc.longitude;
+    notifyListeners();
+  }
+
+  Future<void> defineMarker(LatLng latLng) async {
+    markers
+      ..clear()
+      ..add(
+        Marker(
+          markerId: const MarkerId('your-loc'),
+          position: latLng,
+        ),
+      );
+    final info = await geo.placemarkFromCoordinates(
+      latLng.latitude,
+      latLng.longitude,
+    );
+    final place = info[0];
+    address = '${place.subLocality}, ${place.locality}, ${place.country}';
     notifyListeners();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:story_app/extensions/context_extension.dart';
@@ -64,21 +65,6 @@ class DetailStoryItem extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                if (dStory.lat != null && dStory.lon != null)
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          storiesProv.address!,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      const Icon(Icons.location_on, size: 16),
-                    ],
-                  ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
@@ -132,6 +118,50 @@ class DetailStoryItem extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
+                if (dStory.lat != null && dStory.lon != null)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          storiesProv.address!,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      const Icon(Icons.location_on, size: 16),
+                    ],
+                  ),
+                const SizedBox(height: 8),
+                if (dStory.lat != null && dStory.lon != null)
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: context.color.primary.withOpacity(.7),
+                        width: 2,
+                      ),
+                    ),
+                    height: 150,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: LatLng(dStory.lat!, dStory.lon!),
+                          zoom: 12,
+                        ),
+                        onMapCreated: (controller) {
+                          storiesProv
+                              .defineMarker(LatLng(dStory.lat!, dStory.lon!));
+                        },
+                        markers: storiesProv.markers,
+                        onTap: storiesProv.defineMarker,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

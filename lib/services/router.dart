@@ -122,7 +122,7 @@ class AppRouter {
       final authProv = context.read<AuthProvider>();
       final localProv = context.read<LocalizationProvider>();
       final logginIn = state.matchedLocation == '/';
-      
+
       await localProv.getLocale();
       await authProv.getUserData();
 
