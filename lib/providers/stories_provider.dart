@@ -226,20 +226,26 @@ class StoriesProvider extends ChangeNotifier {
   }
 
   Future<void> defineMarker(LatLng latLng) async {
+    final info = await geo.placemarkFromCoordinates(
+      latLng.latitude,
+      latLng.longitude,
+    );
+    final place = info[0];
+    final street = place.street!;
+    address = '${place.subLocality}, ${place.locality}, ${place.country}';
+    
     markers
       ..clear()
       ..add(
         Marker(
           markerId: const MarkerId('your-loc'),
           position: latLng,
+          infoWindow: InfoWindow(
+            title: street,
+            snippet: address,
+          ),
         ),
       );
-    final info = await geo.placemarkFromCoordinates(
-      latLng.latitude,
-      latLng.longitude,
-    );
-    final place = info[0];
-    address = '${place.subLocality}, ${place.locality}, ${place.country}';
     notifyListeners();
   }
 }

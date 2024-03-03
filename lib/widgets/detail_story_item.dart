@@ -145,20 +145,19 @@ class DetailStoryItem extends StatelessWidget {
                         width: 2,
                       ),
                     ),
-                    height: 150,
+                    height: 250,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(6),
                       child: GoogleMap(
                         initialCameraPosition: CameraPosition(
                           target: LatLng(dStory.lat!, dStory.lon!),
-                          zoom: 12,
+                          zoom: 14,
                         ),
                         onMapCreated: (controller) {
                           storiesProv
                               .defineMarker(LatLng(dStory.lat!, dStory.lon!));
                         },
                         markers: storiesProv.markers,
-                        onTap: storiesProv.defineMarker,
                       ),
                     ),
                   ),
